@@ -1,6 +1,30 @@
 require "sinatra"
 require "sinatra/activerecord"
 
+# require "./aes_crypt"
+# https://gist.github.com/subwindow/728456
+require 'openssl'
+
+module AESCrypt
+  # def AESCrypt.decrypt(encrypted_data, key, iv, cipher_type)
+    def AESCrypt.decrypt(encrypted_data, key, iv, cipher_type)
+    aes = OpenSSL::Cipher::Cipher.new(cipher_type)
+    aes.decrypt
+    aes.key = key
+    aes.iv = iv if iv != nil
+    aes.update([encrypted_data].pack("H*")) + aes.final
+    end
+
+    # def AESCrypt.encrypt(data, key, iv, cipher_type)
+  def AESCrypt.encrypt(data, key, iv, cipher_type)
+    aes = OpenSSL::Cipher::Cipher.new(cipher_type)
+    aes.encrypt
+    aes.key = key
+    aes.iv = iv if iv != nil
+    (aes.update(data) + aes.final).unpack("H*")[0]
+  end
+end
+
 set :database, {adapter: "sqlite3", database: "foo.sqlite3"}
 
 class MyApplication < Sinatra::Base
@@ -16,9 +40,12 @@ get '/' do
 end
 
 get '/messages' do
-  # require 'pry'; binding.pry;
   @messages = Messages.all
   erb :index
+end
+
+get '/messages/' do
+    redirect '/messages'
 end
 
 get '/messages/new' do
@@ -27,7 +54,11 @@ get '/messages/new' do
 end
 
 post '/messages' do
-  @message = Messages.new(params[:message])
+  a = params[:message]
+  b = a.to_a
+  # k = OpenSSL::Digest::SHA256.new(1234.to_s).digest
+  c = AESCrypt.encrypt(b[0][1], OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+  @message = Messages.new("message"=>"#{c}")
   if @message.save
     redirect "/messages/#{@message.id}"
   else
@@ -35,9 +66,10 @@ post '/messages' do
   end
 end
 
-
 get '/messages/:id' do
-  @message = Messages.find(params[:id])
+  a = Messages.find(params[:id])
+  @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+
   erb :show
 end
 
@@ -46,3 +78,6 @@ post '/messages/:id' do
   # @message.delete
   redirect '/'
 end
+
+
+# require 'pry'; binding.pry;
