@@ -24,6 +24,11 @@ get '/messages' do
   erb :index
 end
 
+get '/messages.json' do
+  content_type :json
+  @messages = Messages.all.to_json
+end
+
 get '/messages/' do
     redirect '/messages'
 end
