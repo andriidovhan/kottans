@@ -1,27 +1,9 @@
 require "sinatra"
 require "sinatra/activerecord"
-
 require "./aes_crypt"
 # https://gist.github.com/subwindow/728456
 require 'openssl'
 
-# module AESCrypt
-#     def AESCrypt.decrypt(encrypted_data, key, iv, cipher_type)
-#     aes = OpenSSL::Cipher::Cipher.new(cipher_type)
-#     aes.decrypt
-#     aes.key = key
-#     aes.iv = iv if iv != nil
-#     aes.update([encrypted_data].pack("H*")) + aes.final
-#     end
-#
-#   def AESCrypt.encrypt(data, key, iv, cipher_type)
-#     aes = OpenSSL::Cipher::Cipher.new(cipher_type)
-#     aes.encrypt
-#     aes.key = key
-#     aes.iv = iv if iv != nil
-#     (aes.update(data) + aes.final).unpack("H*")[0]
-#   end
-# end
 
 set :database, {adapter: "sqlite3", database: "foo.sqlite3"}
 
@@ -74,6 +56,5 @@ post '/messages/:id' do
   @message = Messages.find(params[:id]).destroy
   redirect '/'
 end
-
 
 # require 'pry'; binding.pry;
