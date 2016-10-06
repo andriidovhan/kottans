@@ -3,7 +3,7 @@ require "sinatra/activerecord"
 require "./aes_crypt"
 # https://gist.github.com/subwindow/728456
 require 'openssl'
-
+require 'json'
 
 set :database, {adapter: "sqlite3", database: "foo.sqlite3"}
 
@@ -38,6 +38,12 @@ get '/messages/new' do
   erb :new
 end
 
+post '/payload.json' do
+  push = JSON.parse(request.body.read.to_s)
+  puts "I got some JSON: #{push.inspect}"
+  return 201
+end
+
 post '/messages' do
   a = params[:message]
   b = a.to_a
@@ -58,8 +64,14 @@ get '/messages/:id' do
 end
 
 post '/messages/:id' do
+  content_type :json
   @message = Messages.find(params[:id]).destroy
   redirect '/'
 end
 
+delete '/messages/:id.json' do
+  content_type :json
+  @message = Messages.find(params[:id]).destroy
+  return 204
+end
 # require 'pry'; binding.pry;
