@@ -36,7 +36,7 @@ describe 'Server Service' do
 
   end
 
-  it "should not load the home page" do
+  it "should not load the wrong page" do
     get '/blabla'
     expect(last_response).to_not be_ok
   end
