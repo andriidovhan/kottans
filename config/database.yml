@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  pool: 5
+
+development:
+  <<: *default
+  database: kottans_db_development
+  username: kottan_app
+  password: 'P@$$w0rd'
+
+...
+
+production:
+  <<: *default
+  database: kottans_db_production
+  username: kottan_app
+  password: 'P@$$w0rd'

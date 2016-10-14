@@ -4,8 +4,9 @@ require "./aes_crypt"
 # https://gist.github.com/subwindow/728456
 require 'openssl'
 require 'json'
+require 'zlib'
 
-set :database, {adapter: "sqlite3", database: "foo.sqlite3"}
+set :database, {adapter: "postgresql", database: "kottans_db_development"}
 
 class MyApplication < Sinatra::Base
   register Sinatra::ActiveRecordExtension
