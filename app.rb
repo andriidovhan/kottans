@@ -39,17 +39,11 @@ get '/messages/new' do
   erb :new
 end
 
-post '/payload.json' do
-  push = JSON.parse(request.body.read.to_s)
-  puts "I got some JSON: #{push.inspect}"
-  return 201
-end
-
 post '/messages' do
-  a = params[:message]
-  b = a.to_a
-  c = AESCrypt.encrypt(b[0][1], OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
-  @message = Messages.new("message"=>"#{c}")
+  a = params[:message].to_a
+  c = AESCrypt.encrypt(a[0][1], OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+  d = params[:destruction].to_a
+  @message = Messages.new("message"=>"#{c}","destruction"=>d[0][1].to_i)
   if @message.save
     redirect "/messages/#{@message.id}"
   else
@@ -58,10 +52,21 @@ post '/messages' do
 end
 
 get '/messages/:id' do
+  # a = Messages.find(params[:id])
+  # @dectruction = Messages.find(params[:id]).destruction
+  # @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+  #
+  # erb :show
   a = Messages.find(params[:id])
-  @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+  if a.destruction == 1
+    @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+    Messages.find(params[:id]).destroy
+    erb :show
+  else
+    @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
 
-  erb :show
+    erb :show
+  end
 end
 
 post '/messages/:id' do

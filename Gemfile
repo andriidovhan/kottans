@@ -10,6 +10,7 @@ gem "rack-test"
 
 gem "pg"
 
+gem "pry"
 
 # gem 'guard'
 # gem 'guard-rspec'

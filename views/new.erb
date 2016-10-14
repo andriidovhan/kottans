@@ -7,6 +7,9 @@
 <form action="/messages" method="post">
   <label for="message">Message:</label><br />
   <textarea id="message" name="message[message]" rows="5"><%= @message.message %></textarea>
+<p></p>
+  <label for="message">Destruction(0 - after first click/1 - after 1 hour):</label><br />
+  <textarea id="message" name="destruction[destruction]" rows="1"><%= @message.destruction %></textarea>
   <br />
 
   <input type="submit" value="Create Message" />
