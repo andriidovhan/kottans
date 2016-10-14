@@ -1,4 +1,12 @@
-<h1>Welcome to my message store!</h1>
+<h1>Listing messages!</h1>
+
+<p>All messages are encrypted.
+  Press on specific message for dectrypting.</p>
+
+<form method="GET" action="/messages/new">
+  <input type='submit' value='Add message'>
+</form>
+
 <ul>
   <% @messages.each do |message| %>
       <li>

@@ -17,7 +17,7 @@ class Messages < ActiveRecord::Base
 end
 
 get '/' do
-  p 'Hello!'
+  redirect '/messages'
 end
 
 get '/messages' do

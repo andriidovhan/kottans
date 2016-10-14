@@ -1,4 +1,9 @@
 <h1>Here you can add a New Message</h1>
+
+<form method="GET" action="/messages">
+  <input type='submit' value='Back to all messages'>
+</form>
+
 <form action="/messages" method="post">
   <label for="message">Message:</label><br />
   <textarea id="message" name="message[message]" rows="5"><%= @message.message %></textarea>
