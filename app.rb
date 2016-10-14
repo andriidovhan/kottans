@@ -43,34 +43,34 @@ post '/messages' do
   a = params[:message].to_a
   c = AESCrypt.encrypt(a[0][1], OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
   d = params[:destruction].to_a
-  @message = Messages.new("message"=>"#{c}","destruction"=>d[0][1].to_i)
+  @message = Messages.new("message"=>"#{c}","destruction"=>d[0][1].to_i, "created_at"=>Time.now)
   if @message.save
-    redirect "/messages/#{@message.id}"
+    # redirect "/messages/#{@message.id}"
+    redirect "/messages"
   else
     erb :new
   end
 end
 
+def diff_time(time)
+  Time.now - time
+end
+
 get '/messages/:id' do
-  # a = Messages.find(params[:id])
-  # @dectruction = Messages.find(params[:id]).destruction
-  # @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
-  #
-  # erb :show
   a = Messages.find(params[:id])
+  @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
   if a.destruction == 1
-    @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+    Messages.find(params[:id]).destroy
+    erb :show
+  elsif diff_time(a.created_at) >= 3600.0
     Messages.find(params[:id]).destroy
     erb :show
   else
-    @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
-
     erb :show
   end
 end
 
-post '/messages/:id' do
-  content_type :json
+post '/messages/:id/' do
   @message = Messages.find(params[:id]).destroy
   redirect '/'
 end
@@ -80,4 +80,5 @@ delete '/messages/:id.json' do
   @message = Messages.find(params[:id]).destroy
   return 204
 end
+
 # require 'pry'; binding.pry;
