@@ -25,7 +25,8 @@
     <th>ID</th>
     <th>Message</th>
     <th>Created</th>
-    <th>Way for deleting(1 - after 1st click/* - after 1 hour)</th>
+    <th align="center">Way for deleting(1 - after 1st click/* - after 1 hour)</th>
+    <th>Urgent deleting</th>
     <th colspan=2"></th>
   </tr>
 
@@ -34,7 +35,11 @@
       <td><%= message.id %></a></td>
       <td><a href="/messages/<%= message.id %>"><%= message.message %></a></td>
       <td><%= message.created_at %></td>
-      <td><%= message.destruction %></a></td>
+      <th><%= message.destruction %></a></th>
+      <td>
+      <form onsubmit="return confirm('Are you sure you want to delete this message?')" method="POST" action="/messages/<%= message.id %>">
+        <button type="submit">Delete This Message Immediatly </button>
+      </form></td>
     </tr>
 <% end %>
 </table>

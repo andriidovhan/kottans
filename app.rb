@@ -6,6 +6,23 @@ require 'openssl'
 require 'json'
 require 'zlib'
 
+# helpers do
+#   def protected!
+#     return if authorized?
+#     headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
+#     halt 401, "Not authorized\n"
+#   end
+#
+#   def authorized?
+#     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+#     @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == ['admin', 'password']
+#   end
+# end
+
+use Rack::Auth::Basic, "Restricted Area" do |username, password|
+  username == 'admin' and password == 'admin'
+end
+
 set :database, {adapter: "postgresql", database: "kottans_db_development"}
 
 class MyApplication < Sinatra::Base
@@ -31,7 +48,7 @@ get '/messages.json' do
 end
 
 get '/messages/' do
-    redirect '/messages'
+  redirect '/messages'
 end
 
 get '/messages/new' do
@@ -70,7 +87,7 @@ get '/messages/:id' do
   end
 end
 
-post '/messages/:id/' do
+post '/messages/:id' do
   @message = Messages.find(params[:id]).destroy
   redirect '/'
 end
