@@ -6,22 +6,29 @@ require 'openssl'
 require 'json'
 require 'zlib'
 
-# helpers do
-#   def protected!
-#     return if authorized?
-#     headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
-#     halt 401, "Not authorized\n"
-#   end
-#
-#   def authorized?
-#     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-#     @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == ['admin', 'password']
-#   end
-# end
+# auth for specific link
+helpers do
+  def protected!
+    return if authorized?
+    headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
+    halt 401, message_for_no_auth_user
+  end
 
-use Rack::Auth::Basic, "Restricted Area" do |username, password|
-  username == 'admin' and password == 'admin'
+  def message_for_no_auth_user
+    @message =  Messages.find(params[:id]).message
+    erb :show
+  end
+
+  def authorized?
+    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+    @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == ['admin', 'password']
+  end
 end
+
+#auth for everything
+# use Rack::Auth::Basic, "Restricted Area" do |username, password|
+#   username == 'admin' and password == 'admin'
+# end
 
 set :database, {adapter: "postgresql", database: "kottans_db_development"}
 
@@ -74,6 +81,7 @@ def diff_time(time)
 end
 
 get '/messages/:id' do
+  protected!
   a = Messages.find(params[:id])
   @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
   if a.destruction == 1
