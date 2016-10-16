@@ -1,3 +1,9 @@
+GIT
+  remote: git://github.com/ruby/openssl.git
+  revision: 9e0df41444612d794300f2a7bd26d515f6c4662c
+  specs:
+    openssl (2.0.0.beta.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -60,6 +66,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  openssl!
   pg
   pry
   rack-test

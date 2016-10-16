@@ -4,6 +4,7 @@ gem "sinatra"
 gem "sinatra-activerecord"
 
 #gem "openssl"
+gem 'openssl', github: 'ruby/openssl'
 
 gem "rspec", :require => 'spec'
 gem "rack-test"
