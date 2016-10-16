@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161014124811) do
+ActiveRecord::Schema.define(version: 20161016133230) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20161014124811) do
     t.string   "message"
     t.integer  "destruction", default: 0
     t.datetime "created_at"
+    t.string   "link"
   end
 
 end

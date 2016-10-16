@@ -1,7 +1,7 @@
 <h1>Listing messages!</h1>
 
-<p>All messages are encrypted.
-  Press on specific message for decrypting.</p>
+<p>All messages are encrypted.</p>
+<p>Only user with correct credentials are able to see decryption version.</p>
 
 <form method="GET" action="/messages/new">
   <input type='submit' value='Add message'>
@@ -10,7 +10,7 @@
 <table>
   <tr>
     <th>ID</th>
-    <th>Message</th>
+    <th>Link to message</th>
     <th>Created</th>
     <th width="130">Way for deleting (1 - after 1st click/ * - after 1 hour)</th>
     <th>Urgent deleting</th>
@@ -19,11 +19,11 @@
 <% @messages.each do |message| %>
     <tr>
       <td><%= message.id %></a></td>
-      <td><a href="/messages/<%= message.id %>"><%= message.message %></a></td>
+      <td><a href="/messages/<%= message.link %>"><%= "/messages/" + message.link %></a></td>
       <td><%= message.created_at %></td>
       <th><%= message.destruction %></a></th>
       <td>
-      <form onsubmit="return confirm('Are you sure you want to delete this message?')" method="POST" action="/messages/<%= message.id %>">
+      <form onsubmit="return confirm('Are you sure you want to delete this message?')" method="POST" action="/messages/<%= message.link %>">
         <button type="submit">Delete This Message Immediatly </button>
       </form></td>
     </tr>

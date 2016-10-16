@@ -5,6 +5,7 @@ require "./aes_crypt"
 require 'openssl'
 require 'json'
 require 'zlib'
+require 'securerandom'
 
 # auth for specific link
 helpers do
@@ -67,7 +68,7 @@ post '/messages' do
   a = params[:message].to_a
   c = AESCrypt.encrypt(a[0][1], OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
   d = params[:destruction].to_a
-  @message = Messages.new("message"=>"#{c}","destruction"=>d[0][1].to_i, "created_at"=>Time.now)
+  @message = Messages.new("message"=>"#{c}","destruction"=>d[0][1].to_i, "created_at"=>Time.now, "link"=>"#{SecureRandom.urlsafe_base64(5)}")
   if @message.save
     # redirect "/messages/#{@message.id}"
     redirect "/messages"
@@ -80,23 +81,46 @@ def diff_time(time)
   Time.now - time
 end
 
-get '/messages/:id' do
+# get '/messages/:id' do
+#   protected!
+#   a = Messages.find(params[:id])
+#   @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+#   if a.destruction == 1
+#     Messages.find(params[:id]).destroy
+#     erb :show
+#   elsif diff_time(a.created_at) >= 3600.0
+#     Messages.find(params[:id]).destroy
+#     erb :show
+#   else
+#     erb :show
+#   end
+# end
+
+get '/messages/:link' do
+  # require 'pry'; binding.pry;
   protected!
-  a = Messages.find(params[:id])
-  @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
-  if a.destruction == 1
-    Messages.find(params[:id]).destroy
+  a = Messages.where(link: "#{params[:link]}")
+  @message = AESCrypt.decrypt(a[0].message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+  if a[0].destruction == 1
+    a[0].destroy
     erb :show
-  elsif diff_time(a.created_at) >= 3600.0
-    Messages.find(params[:id]).destroy
+  elsif diff_time(a[0].created_at) >= 3600.0
+   a[0].destroy
     erb :show
   else
     erb :show
   end
 end
 
-post '/messages/:id' do
-  @message = Messages.find(params[:id]).destroy
+
+# post '/messages/:id' do
+#   @message = Messages.find(params[:id]).destroy
+#   redirect '/'
+# end
+
+post '/messages/:link' do
+  a = Messages.where(link: "#{params[:link]}")
+  @message = a[0].destroy
   redirect '/'
 end
 
