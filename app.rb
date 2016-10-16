@@ -16,7 +16,9 @@ helpers do
   end
 
   def message_for_no_auth_user
-    @message =  Messages.find(params[:id]).message
+    a = Messages.where(link: "#{params[:link]}")
+    @message = a[0].message
+
     erb :show
   end
 
@@ -81,35 +83,35 @@ def diff_time(time)
   Time.now - time
 end
 
-get '/messages/:id' do
-  protected!
-  a = Messages.find(params[:id])
-  @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
-  if a.destruction == 1
-    Messages.find(params[:id]).destroy
-    erb :show
-  elsif diff_time(a.created_at) >= 3600.0
-    Messages.find(params[:id]).destroy
-    erb :show
-  else
-    erb :show
-  end
-end
-
-# get '/messages/:link' do
+# get '/messages/:id' do
 #   protected!
-#   a = Messages.where(link: "#{params[:link]}")
-#   @message = AESCrypt.decrypt(a[0].message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
-#   if a[0].destruction == 1
-#     a[0].destroy
+#   a = Messages.find(params[:id])
+#   @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+#   if a.destruction == 1
+#     Messages.find(params[:id]).destroy
 #     erb :show
-#   elsif diff_time(a[0].created_at) >= 3600.0
-#    a[0].destroy
+#   elsif diff_time(a.created_at) >= 3600.0
+#     Messages.find(params[:id]).destroy
 #     erb :show
 #   else
 #     erb :show
 #   end
 # end
+
+get '/messages/:link' do
+  protected!
+  a = Messages.where(link: "#{params[:link]}")
+  @message = AESCrypt.decrypt(a[0].message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
+  if a[0].destruction == 1
+    a[0].destroy
+    erb :show
+  elsif diff_time(a[0].created_at) >= 3600.0
+   a[0].destroy
+    erb :show
+  else
+    erb :show
+  end
+end
 
 
 # post '/messages/:id' do
