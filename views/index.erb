@@ -19,7 +19,7 @@
 <% @messages.each do |message| %>
     <tr>
       <td><%= message.id %></a></td>
-      <td><a href="/messages/<%= message.link %>"><%= "/messages/" + message.link %></a></td>
+      <td><a href="/messages/<%= message.link %>"><%= "/messages/" + "#{message.link}" %></a></td>
       <td><%= message.created_at %></td>
       <th><%= message.destruction %></a></th>
       <td>
