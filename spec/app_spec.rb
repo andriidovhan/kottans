@@ -9,23 +9,30 @@ describe 'Server Service' do
     Sinatra::Application
   end
 
-  it "should load the home page" do
+  it "should load the home(/) page" do
     get '/'
-    expect(last_response.status).to eq 200
-    expect(last_response.body).to eq ('Hello!')
+    expect(last_response.status).to eq 302
+    expect(last_response.redirect?).to be true
+    expect(last_response.body).to eq("")
+    expect(last_request.path).to eq('/')
   end
-
-  it "should load the message page" do
+  it "should load the home(/messages) page" do
     get '/messages'
     expect(last_response.status).to eq 200
-    expect(last_response.body).to include ('Welcome to my message store!')
+    expect(last_response.body).to include ("Listing messages!")
+    expect(last_response.body).to include ("All messages are encrypted.")
+    expect(last_response.body).to include ("Only users with correct credentials are able to see decryption version.")
+    expect(last_response.body).to include ("Delete This Message Immediatly")
+
+  end
+  it "should load the home(/messages/) page" do
+    get '/messages/'
+    expect(last_response.status).to eq 302
+    expect(last_response.redirect?).to be true
+    expect(last_response.body).to eq("")
+    expect(last_request.path).to eq('/messages/')
   end
 
-  it "should load the message/ page" do
-    get '/messages/'
-    expect(last_response.body).to eq("")
-    expect(last_response.status).to eq 302
-  end
 
   it "should load the message/new page" do
     get '/messages/new'
@@ -33,7 +40,6 @@ describe 'Server Service' do
     expect(last_response.body).to include ('Here you can add a New Message')
     expect(last_response.body).to include ('input type="submit" value="Create Message"')
     expect(last_response.body).to include ('form action="/messages" method="post"')
-
   end
 
   it "should not load the wrong page" do
