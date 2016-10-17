@@ -17,7 +17,7 @@ class RemoveMessageWorker
     a = Messages.all
     i = 0
     while i < a.size
-      if a[i].destruction != 1 && diff_time_2(a[i].created_at) >= 100
+      if a[i].destruction != 1 && diff_time_2(a[i].created_at) >= 3600
         Messages.find(a[i].id.to_i).destroy
 
       end
