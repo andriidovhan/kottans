@@ -98,8 +98,12 @@ get '/messages/:link' do
     erb :show
   end
   else
-    halt 404, "This is not the message you are looking for."
+    halt 404, message_404
   end
+end
+
+def message_404
+  erb :error_404
 end
 
 post '/messages/:link' do
