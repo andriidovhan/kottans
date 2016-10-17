@@ -83,21 +83,6 @@ def diff_time(time)
   Time.now - time
 end
 
-# get '/messages/:id' do
-#   protected!
-#   a = Messages.find(params[:id])
-#   @message = AESCrypt.decrypt(a.message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
-#   if a.destruction == 1
-#     Messages.find(params[:id]).destroy
-#     erb :show
-#   elsif diff_time(a.created_at) >= 3600.0
-#     Messages.find(params[:id]).destroy
-#     erb :show
-#   else
-#     erb :show
-#   end
-# end
-
 get '/messages/:link' do
   protected!
   a = Messages.where(link: "#{params[:link]}")
@@ -112,12 +97,6 @@ get '/messages/:link' do
     erb :show
   end
 end
-
-
-# post '/messages/:id' do
-#   @message = Messages.find(params[:id]).destroy
-#   redirect '/'
-# end
 
 post '/messages/:link' do
   a = Messages.where(link: "#{params[:link]}")
