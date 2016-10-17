@@ -84,6 +84,7 @@ def diff_time(time)
 end
 
 get '/messages/:link' do
+  if  Messages.where(link: "#{params[:link]}").exists?
   protected!
   a = Messages.where(link: "#{params[:link]}")
   @message = AESCrypt.decrypt(a[0].message, OpenSSL::Digest::SHA256.new(1234.to_s).digest, nil, "AES-256-CBC")
@@ -95,6 +96,9 @@ get '/messages/:link' do
     erb :show
   else
     erb :show
+  end
+  else
+    halt 404, "This is not the message you are looking for."
   end
 end
 
