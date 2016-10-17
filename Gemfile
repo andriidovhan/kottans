@@ -13,5 +13,6 @@ gem "pg"
 
 gem "pry"
 gem 'rubysl-securerandom', '~> 2.0'
-# gem 'guard'
-# gem 'guard-rspec'
+
+# gem 'sucker_punch'
+gem 'sucker_punch', '~> 2.0'

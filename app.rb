@@ -6,6 +6,7 @@ require 'openssl'
 require 'json'
 require 'zlib'
 require 'securerandom'
+require_relative "remove_message_worker"
 
 # auth for specific link
 helpers do
@@ -48,6 +49,8 @@ get '/' do
 end
 
 get '/messages' do
+  @r_m = RemoveMessageWorker.new
+  @r_m.perform
   @messages = Messages.all
   erb :index
 end
